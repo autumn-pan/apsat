@@ -117,23 +117,48 @@ void append_var(AssignmentMap_t* map)
     map->num_vars++;
 }
 
-int get_bit(uint32_t integer, size_t bit)
+bool get_bit(uint32_t integer, size_t bit)
 {
     return ((integer & (1 << bit)) >> bit);
 }
 
 bool evaluate_clause(int clause[MAX_CLAUSE_LENGTH], AssignmentMap_t* map)
 {
-    for(int i = 0; i < map->num_vars; i++)
+    for(int i = 1; i < map->num_vars + 1;  i++)
     {
         for(int j = 0; j < MAX_CLAUSE_LENGTH; j++)
         {
+            if(clause[j] == 0)
+                continue;
+
             printf("\n%i", clause[j]);
-            if(clause[j] < 0 && clause[j] == i && !get_bit(map->assignment, clause[j]))
+            printf("\nNum: %i", i);
+
+            fflush(stdout);
+            if(clause[j] < 0 && abs(clause[j]) == i && !get_bit(map->assignment, abs(clause[j]) - 1))
+            {
+                printf("Negative");
+
                 return true;
+            }
             else if(clause[j] == i && get_bit(map->assignment, clause[j]))
+             {
+                printf("Positive");
                 return true;
+             }   
         }
     }
+    
     return false;
+}
+
+bool evaluate_formula(int formula[MAX_FORMULA_LENGTH][MAX_CLAUSE_LENGTH], AssignmentMap_t* map)
+{
+    for(int i = 0; i < map->num_vars; i++)
+    {
+        if(!evaluate_clause(formula[i], map))
+            return false;
+    }
+
+    return true;
 }
