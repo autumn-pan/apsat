@@ -21,5 +21,5 @@ typedef struct
 
 Lexer_t* init_lexer(char* src);
 int* parse_clause(Lexer_t* lexer);
-
+int** parse_formula(Lexer_t* lexer);
 #endif

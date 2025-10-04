@@ -56,7 +56,7 @@ int* parse_clause(Lexer_t* lexer)
     int* clause = calloc(MAX_CLAUSE_LENGTH, sizeof(int));
 
     size_t index = 0;
-    while(lexer->src[lexer->pos] != '\0' && lexer->pos < lexer->len)
+    while(lexer->src[lexer->pos] != '\n' && lexer->pos < lexer->len)
     {
         skip_whitespace(lexer);
         if(index >= MAX_CLAUSE_LENGTH)
@@ -99,4 +99,19 @@ int* parse_clause(Lexer_t* lexer)
     }
 
     return clause;
+}
+
+int** parse_formula(Lexer_t* lexer)
+{
+    int** formula = calloc(MAX_FORMULA_LENGTH, sizeof(int*));
+
+    size_t index = 0;
+    while(lexer->pos < lexer->len)
+    {
+        formula[index] = parse_clause(lexer);
+        index++;
+        lexer->pos++;
+    }
+
+    return formula;
 }
