@@ -64,24 +64,28 @@ int* parse_clause(Lexer_t* lexer)
         if(index >= MAX_CLAUSE_LENGTH)
             return NULL;
 
+        char tmp[2] = {lexer->src[lexer->pos], '\0'};
+        fflush(stdout);
+
         if(lexer->src[lexer->pos] == '-')
         {
             eat(lexer);
             if(!isdigit(lexer->src[lexer->pos]))
                 return NULL;
 
-            char temp[3] = {'-', eat(lexer), '\0'};
+            char temp[3] = {'-', lexer->src[lexer->pos], '\0'};
             clause[index] = atoi(temp);
             index++;
+            lexer->pos++;
             continue;
         }        
-
         if(!isdigit(lexer->src[lexer->pos]))
                 return NULL;
 
         char temp[2] = {eat(lexer), '\0'};
         clause[index] = atoi(temp);
         index++;
+        lexer->pos++;
     }
 
     return clause;
