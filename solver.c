@@ -128,6 +128,7 @@ bool evaluate_clause(int clause[MAX_CLAUSE_LENGTH], AssignmentMap_t* map)
     {
         for(int j = 0; j < MAX_CLAUSE_LENGTH; j++)
         {
+            printf("\n%i", clause[j]);
             if(clause[j] < 0 && clause[j] == i && !get_bit(map->assignment, clause[j]))
                 return true;
             else if(clause[j] == i && get_bit(map->assignment, clause[j]))
