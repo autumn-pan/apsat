@@ -5,6 +5,12 @@
 #include "solver.h"
 #include <stdio.h>
 
+void append_char(char* str, char c)
+{
+    char temp[2] = {c, '\0'};
+    strcat(str, temp);
+}
+
 Lexer_t* init_lexer(char* src)
 {
     Lexer_t* lexer = malloc(sizeof(Lexer_t));
@@ -34,14 +40,6 @@ char peek(Lexer_t* lexer)
     return lexer->src[lexer->pos +1];
 }
 
-char eat(Lexer_t* lexer)
-{
-    if(lexer->pos + 1 >= lexer->len)
-        return '\0';
-    advance_lexer(lexer);
-    return lexer->src[lexer->pos-1];
-}
-
 void skip_whitespace(Lexer_t *lexer)
 {
     char c = lexer->src[lexer->pos];
@@ -58,23 +56,29 @@ int* parse_clause(Lexer_t* lexer)
     int* clause = calloc(MAX_CLAUSE_LENGTH, sizeof(int));
 
     size_t index = 0;
-    while(lexer->src[lexer->pos] != '\0')
+    while(lexer->src[lexer->pos] != '\0' && lexer->pos < lexer->len)
     {
         skip_whitespace(lexer);
         if(index >= MAX_CLAUSE_LENGTH)
             return NULL;
 
         char tmp[2] = {lexer->src[lexer->pos], '\0'};
-        fflush(stdout);
 
         if(lexer->src[lexer->pos] == '-')
         {
-            eat(lexer);
+            advance_lexer(lexer);
             if(!isdigit(lexer->src[lexer->pos]))
                 return NULL;
 
-            char temp[3] = {'-', lexer->src[lexer->pos], '\0'};
-            clause[index] = atoi(temp);
+            
+            char num[64] = "-";
+
+            while(isdigit(lexer->src[lexer->pos]) && lexer->pos < lexer->len)
+            {
+                append_char(num, lexer->src[lexer->pos]);
+                lexer->pos++;
+            }
+            clause[index] = atoi(num);
             index++;
             lexer->pos++;
             continue;
@@ -82,8 +86,14 @@ int* parse_clause(Lexer_t* lexer)
         if(!isdigit(lexer->src[lexer->pos]))
                 return NULL;
 
-        char temp[2] = {eat(lexer), '\0'};
-        clause[index] = atoi(temp);
+        char num[64] = "";
+        while(isdigit(lexer->src[lexer->pos]) && lexer->pos < lexer->len)
+        {
+            append_char(num, lexer->src[lexer->pos]);
+            lexer->pos++;
+        }
+
+        clause[index] = atoi(num);
         index++;
         lexer->pos++;
     }
