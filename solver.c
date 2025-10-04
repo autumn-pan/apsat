@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include "solver.h"
 #include <stdio.h>
+#include <stdint.h>
 
 Lexer_t* init_lexer(char* src)
 {
@@ -53,6 +54,7 @@ void skip_whitespace(Lexer_t *lexer)
     }
 }
 
+
 int* parse_clause(Lexer_t* lexer)
 {
     int* clause = calloc(MAX_CLAUSE_LENGTH, sizeof(int));
@@ -65,7 +67,6 @@ int* parse_clause(Lexer_t* lexer)
             return NULL;
 
         char tmp[2] = {lexer->src[lexer->pos], '\0'};
-        fflush(stdout);
 
         if(lexer->src[lexer->pos] == '-')
         {
@@ -89,4 +90,38 @@ int* parse_clause(Lexer_t* lexer)
     }
 
     return clause;
+}
+
+AssignmentMap_t* init_map()
+{
+    AssignmentMap_t* map = malloc(sizeof(AssignmentMap_t));
+    map->assignment = 0;
+    map->num_vars = 0;
+
+    return map;
+}
+
+void append_var(AssignmentMap_t* map)
+{
+    map->num_vars++;
+}
+
+int get_bit(uint32_t integer, size_t bit)
+{
+    return ((integer & (1 << bit)) >> bit);
+}
+
+bool evaluate_clause(int clause[MAX_CLAUSE_LENGTH], AssignmentMap_t* map)
+{
+    for(int i = 0; i < map->num_vars; i++)
+    {
+        for(int j = 0; j < MAX_CLAUSE_LENGTH; j++)
+        {
+            if(clause[j] < 0 && clause[j] == i && !get_bit(map->assignment, clause[j]))
+                return true;
+            else if(clause[j] == i && get_bit(map->assignment, clause[j]))
+                return true;
+        }
+    }
+    return false;
 }
