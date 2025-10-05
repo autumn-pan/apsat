@@ -5,6 +5,7 @@
 #include "solver.h"
 #include <stdio.h>
 #include <limits.h>
+#include <time.h>
 
 void append_char(char* str, char c)
 {
@@ -187,4 +188,45 @@ uint64_t solve_formula(int** formula, AssignmentMap_t* map, size_t num_clauses)
     }
 
     return ULONG_MAX;
+}
+
+int solve(char* formula)
+{
+    char* src = "1 2 \n -1 3 \n -2 4 \n -3 -4";
+
+    uint8_t max = 0;
+    AssignmentMap_t* map = init_map();
+
+    int num_clauses = 1;
+
+    for(int i = 0; i < strlen(src); i++)
+    {
+        if(isdigit(src[i]))
+        {
+            if(src[i] - 48 > max)
+            {
+                max = src[i] - 48;
+            }
+
+        }
+        else if (src[i] == '\n')
+            num_clauses++;
+    }
+
+    map->num_vars = max;
+
+    Lexer_t* lexer = init_lexer(src);
+
+    int** formula = parse_formula(lexer);
+
+    int solution = solve_formula(formula, map, num_clauses);
+    free(lexer);
+    free(map);
+
+    return solution;
+}
+
+int** gen_formula()
+{
+    int num_clauses = srand(time(0));
 }

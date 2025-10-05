@@ -8,3 +8,6 @@ You may choose to gamble your coins on difficult problems, or safekeep them.
 This game is meant to introduce players to logical reasoning and boolean expressions. I also encourage the use of techniques like De Morgan's laws. In the end, however, this is a front for something much larger-- an SAT Solver. Boolean satisfiability is a very large field in computer science, and I thought that it would be an interesting idea for a puzzle game, as well as an opportunity to show what I've learned.
 
 There's a philosophical side to this as well. The coins are your agency, what you can and cannot do. They represent your intricate balance as you try to stay afloat. The goal is to keep your coins, your agency, for as long as you can. This game is a demonstration of a computer's sheer computational power, and what you can accomplish with it.
+
+# P vs. NP
+Unfortunately, this problem is still unsolved, I did not solve it today. :(
