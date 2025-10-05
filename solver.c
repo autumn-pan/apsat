@@ -80,7 +80,9 @@ int* parse_clause(Lexer_t* lexer)
                 append_char(num, lexer->src[lexer->pos]);
                 lexer->pos++;
             }
+
             clause[index] = atoi(num);
+
             index++;
             lexer->pos++;
             continue;
@@ -131,19 +133,13 @@ bool evaluate_clause(int clause[MAX_CLAUSE_LENGTH], AssignmentMap_t* map)
             if(clause[j] == 0)
                 continue;
 
-            printf("\n%i", clause[j]);
-            printf("\nNum: %i", i);
-
             fflush(stdout);
             if(clause[j] < 0 && abs(clause[j]) == i && !get_bit(map->assignment, abs(clause[j]) - 1))
             {
-                printf("Negative");
-
                 return true;
             }
             else if(clause[j] == i && get_bit(map->assignment, clause[j]))
              {
-                printf("Positive");
                 return true;
              }   
         }
@@ -152,13 +148,29 @@ bool evaluate_clause(int clause[MAX_CLAUSE_LENGTH], AssignmentMap_t* map)
     return false;
 }
 
-bool evaluate_formula(int formula[MAX_FORMULA_LENGTH][MAX_CLAUSE_LENGTH], AssignmentMap_t* map)
+bool evaluate_formula(int** formula, AssignmentMap_t* map, size_t num_clauses)
 {
-    for(int i = 0; i < map->num_vars; i++)
+    for(int i = 0; i < num_clauses; i++)
     {
         if(!evaluate_clause(formula[i], map))
             return false;
     }
 
     return true;
+}
+
+
+int** parse_formula(Lexer_t* lexer)
+{
+    int** formula = calloc(MAX_FORMULA_LENGTH, sizeof(int*));
+    size_t index = 0;
+
+    while(lexer->pos < lexer->len)
+    {
+        formula[index] = parse_clause(lexer);
+        index++;
+        lexer->pos++;
+    }
+
+    return formula;
 }

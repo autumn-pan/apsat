@@ -3,15 +3,15 @@
 
 int main()
 {
-    char* src = "-1 \n -1";
+    char* src = "-1 \n 1";
 
     Lexer_t* lexer = init_lexer(src);
-    int* clause = parse_clause(lexer);
-    
-    fflush(stdout);
+
     AssignmentMap_t* map = init_map();
     append_var(map);
-    map->assignment = 1;
+    int** formula = parse_formula(lexer);
 
-    printf("\nClause: %i",evaluate_clause(clause, map));
+    map->assignment = 0;
+
+    printf("\nClause: %i", evaluate_formula(formula, map, 2));
 }

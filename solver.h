@@ -33,5 +33,6 @@ Lexer_t* init_lexer(char* src);
 int* parse_clause(Lexer_t* lexer);
 void append_var(AssignmentMap_t* map);
 bool evaluate_clause(int clause[MAX_CLAUSE_LENGTH], AssignmentMap_t* map);
-
+int** parse_formula(Lexer_t* lexer);
+bool evaluate_formula(int** formula, AssignmentMap_t* map, size_t num_clauses);
 #endif
