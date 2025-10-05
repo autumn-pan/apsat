@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include "solver.h"
 #include <stdio.h>
+#include <limits.h>
 
 void append_char(char* str, char c)
 {
@@ -56,9 +57,8 @@ void skip_whitespace(Lexer_t *lexer)
 int* parse_clause(Lexer_t* lexer)
 {
     int* clause = calloc(MAX_CLAUSE_LENGTH, sizeof(int));
-
     size_t index = 0;
-    while(lexer->src[lexer->pos] != '\n' && lexer->pos < lexer->len)
+    while(lexer->pos < lexer->len && lexer->src[lexer->pos] != '\n')
     {
         skip_whitespace(lexer);
         if(index >= MAX_CLAUSE_LENGTH)
@@ -75,7 +75,7 @@ int* parse_clause(Lexer_t* lexer)
             
             char num[64] = "-";
 
-            while(isdigit(lexer->src[lexer->pos]) && lexer->pos < lexer->len)
+            while(lexer->pos < lexer->len && isdigit(lexer->src[lexer->pos]))
             {
                 append_char(num, lexer->src[lexer->pos]);
                 lexer->pos++;
@@ -101,7 +101,6 @@ int* parse_clause(Lexer_t* lexer)
         index++;
         lexer->pos++;
     }
-
     return clause;
 }
 
@@ -126,23 +125,20 @@ bool get_bit(uint32_t integer, size_t bit)
 
 bool evaluate_clause(int clause[MAX_CLAUSE_LENGTH], AssignmentMap_t* map)
 {
-    for(int i = 1; i < map->num_vars + 1;  i++)
+    for(int i = 0; i < MAX_CLAUSE_LENGTH; i++)
     {
-        for(int j = 0; j < MAX_CLAUSE_LENGTH; j++)
-        {
-            if(clause[j] == 0)
-                continue;
+        int literal = clause[i];
+        // Literals cannot be 0, because then they can't be negated and are therefore not booleans
+        if(literal == 0)
+            break;
 
-            fflush(stdout);
-            if(clause[j] < 0 && abs(clause[j]) == i && !get_bit(map->assignment, abs(clause[j]) - 1))
-            {
-                return true;
-            }
-            else if(clause[j] == i && get_bit(map->assignment, clause[j]))
-             {
-                return true;
-             }   
-        }
+        int index = abs(literal) - 1;
+        bool value = get_bit(map->assignment, index);
+
+        if(literal > 0 && value)
+            return true;
+        else if(literal < 0 && !value)
+            return true;
     }
     
     return false;
@@ -159,7 +155,6 @@ bool evaluate_formula(int** formula, AssignmentMap_t* map, size_t num_clauses)
     return true;
 }
 
-
 int** parse_formula(Lexer_t* lexer)
 {
     int** formula = calloc(MAX_FORMULA_LENGTH, sizeof(int*));
@@ -173,4 +168,23 @@ int** parse_formula(Lexer_t* lexer)
     }
 
     return formula;
+}
+
+uint64_t solve_formula(int** formula, AssignmentMap_t* map, size_t num_clauses)
+{
+    uint64_t max_size = (1ULL << map->num_vars);
+
+    map->assignment = 0;
+
+    while(map->assignment < max_size)
+    {
+        if(evaluate_formula(formula, map, num_clauses))
+        {
+            return map->assignment;
+        }
+
+        map->assignment++;
+    }
+
+    return ULONG_MAX;
 }

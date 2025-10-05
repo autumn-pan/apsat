@@ -1,5 +1,9 @@
 {
     "files.associations": {
-        "random": "c"
+        "random": "c",
+        "stdint.h": "c",
+        "chrono": "c",
+        "ranges": "c",
+        "variant": "c"
     }
 }
