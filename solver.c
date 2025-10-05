@@ -192,41 +192,74 @@ uint64_t solve_formula(int** formula, AssignmentMap_t* map, size_t num_clauses)
 
 int solve(char* formula)
 {
-    char* src = "1 2 \n -1 3 \n -2 4 \n -3 -4";
-
     uint8_t max = 0;
     AssignmentMap_t* map = init_map();
 
     int num_clauses = 1;
 
-    for(int i = 0; i < strlen(src); i++)
+    for(int i = 0; i < strlen(formula); i++)
     {
-        if(isdigit(src[i]))
+        if(isdigit(formula[i]))
         {
-            if(src[i] - 48 > max)
+            if(formula[i] - 48 > max)
             {
-                max = src[i] - 48;
+                max = formula[i] - 48;
             }
 
         }
-        else if (src[i] == '\n')
+        else if (formula[i] == '\n')
             num_clauses++;
     }
 
     map->num_vars = max;
 
-    Lexer_t* lexer = init_lexer(src);
+    Lexer_t* lexer = init_lexer(formula);
 
-    int** formula = parse_formula(lexer);
+    int** f = parse_formula(lexer);
 
-    int solution = solve_formula(formula, map, num_clauses);
+    int solution = solve_formula(f, map, num_clauses);
     free(lexer);
     free(map);
 
     return solution;
 }
 
-int** gen_formula()
+char* gen_formula(int max_variables)
 {
-    int num_clauses = srand(time(0));
-}
+    if(max_variables < 2)
+        return NULL;
+
+    int min_clauses = 2;
+    int max_clauses = 5;
+    int min_literals = 1;
+    int max_literals = 4;
+
+    int num_clauses = rand() % (max_clauses - min_clauses + 1) + min_clauses;
+    int num_variables = rand() % (max_variables) + 1;
+
+    char* formula = calloc(1048, sizeof(char));
+
+    for(int i = 0; i < num_clauses; i++)
+    {
+        int num_literals = rand() % (max_literals - min_literals + 1) + min_literals;
+        for(int j = 0; j < num_literals; j++)
+        {
+            int var = rand() % (max_variables) + 1;
+            int is_negated = rand() % 2;
+
+            char tmp[2] = {' ', '\0'};
+            char literal[16];
+            sprintf(literal, "%s%d", is_negated ? "-" : "", var);
+            strcat(formula, literal);
+            strcat(formula, " ");
+        }
+
+        if(i != num_clauses - 1)
+            strcat(formula, "\n ");
+    }
+
+    if(solve(formula) == 0)
+        formula = gen_formula(max_variables);
+
+    return formula;
+} 

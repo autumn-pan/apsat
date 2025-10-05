@@ -37,4 +37,6 @@ int** parse_formula(Lexer_t* lexer);
 bool evaluate_formula(int** formula, AssignmentMap_t* map, size_t num_clauses);
 uint64_t solve_formula(int** formula, AssignmentMap_t* map, size_t num_clauses);
 int solve(char* formula);
+char* gen_formula(int max_variables);
+
 #endif

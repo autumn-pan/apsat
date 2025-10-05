@@ -10,4 +10,4 @@ This game is meant to introduce players to logical reasoning and boolean express
 There's a philosophical side to this as well. The coins are your agency, what you can and cannot do. They represent your intricate balance as you try to stay afloat. The goal is to keep your coins, your agency, for as long as you can. This game is a demonstration of a computer's sheer computational power, and what you can accomplish with it.
 
 # P vs. NP
-Unfortunately, this problem is still unsolved, I did not solve it today. :(
+Unfortunately, this problem still stand unsolved, I did not solve it today. :(. 
