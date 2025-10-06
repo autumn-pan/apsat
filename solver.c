@@ -262,4 +262,4 @@ char* gen_formula(int max_variables)
         formula = gen_formula(max_variables);
 
     return formula;
-} 
+}
